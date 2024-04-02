@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 )
 
@@ -15,28 +16,34 @@ type args struct {
 
 func main() {
 	if os.Getenv("GPTSCRIPT_SLACK_TOKEN") == "" {
-		panic("GPTSCRIPT_SLACK_TOKEN is not set")
+		logrus.Error("GPTSCRIPT_SLACK_TOKEN is not set")
+		os.Exit(1)
 	}
 
 	slackClient := slack.New(os.Getenv("GPTSCRIPT_SLACK_TOKEN"))
 
 	if len(os.Args) != 2 {
-		panic("Usage: " + os.Args[0] + " <JSON parameters>")
+		logrus.Errorf("Usage: %s <JSON parameters>", os.Args[0])
+		os.Exit(1)
 	}
 
 	var a args
 	if err := json.Unmarshal([]byte(os.Args[1]), &a); err != nil {
-		panic(err)
+		logrus.Errorf("failed to parse arguments: %v", err)
+		os.Exit(1)
 	}
 
 	if a.Channel == "" {
-		panic("channel is required")
+		logrus.Error("channel is required")
+		os.Exit(1)
 	} else if a.Message == "" {
-		panic("message is required")
+		logrus.Error("message is required")
+		os.Exit(1)
 	}
 
 	if _, _, err := slackClient.PostMessage(a.Channel, slack.MsgOptionText(a.Message, false)); err != nil {
-		panic(err)
+		logrus.Errorf("failed to post message: %v", err)
+		os.Exit(1)
 	}
 	fmt.Println("message sent successfully")
 }
