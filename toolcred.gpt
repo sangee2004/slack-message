@@ -3,6 +3,6 @@ Description: Sends a Slack message to a particular channel.
 Args: channel: The name of the channel to send the message to.
 Args: message: The message to send.
 
-credential: github.com/sangee2004/gptscript/blob/slack-credential-tool.gpt
+credential: github.com/sangee2004/gptscript/examples/slack-credential-tool.gpt
 
 #!${GPTSCRIPT_TOOL_DIR}/bin/gptscript-go-tool "${GPTSCRIPT_INPUT}"
